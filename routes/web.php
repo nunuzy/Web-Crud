@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\LoginController;
+use App\Models\Book;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,14 +17,27 @@ use App\Http\Controllers\BookController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $jumlahbuku = Book::count();
+    return view('welcome', compact('jumlahbuku'));
+})->middleware('auth');
 
-Route::get('/buku', [BookController::class, 'index'])->name('buku');
+// Route::group(['middleware' => ['auth','hakakses:admin,user']]. function(){
+
+// });
+
+Route::get('/buku', [BookController::class, 'index'])->name('buku')->middleware('auth');
 Route::get('/tambahbuku', [BookController::class, 'tambah'])->name('tambahbuku');
 Route::post('/insertdata', [BookController::class, 'insert'])->name('insertdata');
 
 Route::get('/editdata/{id}', [BookController::class, 'edit'])->name('editdata');
-Route::post('/updatedata/{id}', [BookController::class, 'update'])->name('updatedata');
+Route::put('/updatedata/{id}', [BookController::class, 'update'])->name('updatedata');
 
 Route::get('/delete/{id}', [BookController::class, 'delete'])->name('delete');
+
+Route::get('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/loginproses', [LoginController::class, 'loginproses'])->name('loginproses');
+
+Route::get('/register', [LoginController::class, 'register'])->name('register');
+Route::post('/registeruser', [LoginController::class, 'registeruser'])->name('registeruser');
+
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
